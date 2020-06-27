@@ -34,9 +34,9 @@ done
 
 # Crop the images to a square, as a copy saved in $output_folder
 output_folder=/mnt/d/Pictures/vaporwave
-mkdir "$output_folder"
 for size in 256x256 512x512; do
     for output_format in png jpg; do
+        mkdir -p "${output_folder}/${size}${output_format}"
         for source_format in png jpg; do
             mogrify -resize ${size}^ -gravity center -extent $size -path ${output_folder}/${size}${output_format} -format $output_format ./*.${source_format}
         done
