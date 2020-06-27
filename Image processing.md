@@ -1,15 +1,20 @@
+Make sure that Windows Subsystem for Linux has ImageMagick installed. You can install it in Ubuntu with `sudo apt install imagemagick`. As of Ubuntu 20.04, the latest version of ImageMagick available is ImageMagick 6. If you have ImageMagick 7, you may have to write `magick convert` and `magick mogrify` instead of `convert` and `mogrify`.
+
+Filter out all the images with titles like u̧͉̱̠̤̘̓̾͋͋̋̓n̳̘͝c̉̀͋͂ͭ͑͡ỏn̹̲̠̘̙ͫ͌̀s͕̜̘̖̎͂͠c̫̗͚͊ͫ̄̔̾͠i̹̞͗̌̿̏͂͢o͉̯̟̮͑̑̈́ͣ̿͑ṵ͈̥͈͕ͩ͛s͖̘̭͚̽̈͋̾ ̨̫i͎͎̖̟̻̮̔n̪ͭ̎̇v̴͙̖̳͙ͫe͈̪̩̊̒̐̉̓͞s̱̫̘̣̈̇̅͠t̋̽̎ͧ͟ḯ̙͍̩̲̫ͣͧͭ͂̾ͭ - (Lennobowski).jpg
+because if such a file is in a folder, Windows Subsystem for Linux might won't be able to recognize many of the other files in the folder, and complain about an "Input/output error".
+
 ```sh
+# cd to the directory in which the r/VaporwaveArt images were downloaded
 cd /d/Pictures/Reddit/VaporwaveArt
+# In Git Bash, move all the files names that can be recognized to a folder called SafeVaporwaveArt
+find . -exec mv {} ../SafeVaporwaveArt/ \;
 
 # Extract middle frame of video clips into a local video_clips folder
-mkdir video_clips
 for video_file in *.{mp4,mov,webm,mkv}; do
     filename="${video_file%.*}" # strip the file extension
     # -ss marks what second to get the frame from
-    ffmpeg -ss "$(bc -l <<< "$(ffprobe -loglevel error -of csv=p=0 -show_entries format=duration "$video_file")*0.5")" -i "$video_file" -frames:v 1 "video_clips/${filename}.png"
+    ffmpeg -ss "$(bc -l <<< "$(ffprobe -loglevel error -of csv=p=0 -show_entries format=duration "$video_file")*0.5")" -i "$video_file" -frames:v 1 "${filename}.png"
 done
-
-find SafeVaporwaveArt -type f -exec sh -c 'new=$(echo "{}" | tr "/" "-" | tr " " "_"); mv "{}" "$new"' \;
 
 # Extract files in subfolders into the main folder
 for dir in ./*/; do
@@ -21,22 +26,17 @@ for dir in ./*/; do
     rmdir "$dir"
 done
 
-output_folder=/d/Pictures/vaporwave
+# Crop the images to a square, as a copy saved in $output_folder
+output_folder=/mnt/d/Pictures/vaporwave
+mkdir "$output_folder"
 for size in 256x256 512x512; do
     for output_format in png jpg; do
         for source_format in png jpg; do
-            for dir in ./*/; do
-                # Trim leading ./ and trailing /
-                dir_name="${dir:2:-1}"
-                output_dir=${output_folder}/${size}${output_format}/${dir_name}
-                mkdir -p "$output_dir"
-                magick mogrify -resize ${size}^ -gravity center -extent $size -path "$output_dir" -format $output_format ./"${dir_name}"/*.${source_format}
-            done
-            magick mogrify -resize ${size}^ -gravity center -extent $size -path ${output_folder}/${size}${output_format} -format $output_format ./*.${source_format}
+            mogrify -resize ${size}^ -gravity center -extent $size -path ${output_folder}/${size}${output_format} -format $output_format ./*.${source_format}
         done
+        # Crop the first frame of each GIF as a copy
         for file in *.gif; do
-            echo $file
-            magick convert "$file"[0] -coalesce -resize $size^ -gravity center -extent $size -format $output_format "$output_folder/$size$output_format/${file::-4}.$output_format"
+            convert "$file"[0] -coalesce -resize $size^ -gravity center -extent $size -format $output_format "$output_folder/$size$output_format/${file::-4}.$output_format"
         done
     done
 done
