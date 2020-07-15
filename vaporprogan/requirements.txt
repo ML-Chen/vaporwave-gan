@@ -1,0 +1,6 @@
+tensorflow-gpu==1.14
+numpy
+keras==2.2.5
+scikit-image
+matplotlib
+opencv-python

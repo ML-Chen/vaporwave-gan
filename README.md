@@ -10,6 +10,8 @@ See `Image processing.md`.
 
 Clone the stylegan2 repo in here: `git clone https://github.com/NVlabs/stylegan2`
 
+cd into the `stylegan2` folder
+
 Create a virtual environment. On Windows Command Prompt, this would be:
 
 ```cmd
@@ -47,3 +49,5 @@ python run_generator.py generate-images --seeds=0-10 --truncation-psi=1.0 --netw
 In `stylegan2/training/training_loop.py`, you can assign a path to `resume_pkl` to specify a pkl file to resume training from. The default is `None`, if you don't have a pkl file to resume training from. The resolution of the images have to match what it was previously trained on, but it shouldn't matter whether it's a PNG or JPG. `resume_kimg` allows you to say how many thousands of images have already been trained on. This parameter doesn't really affect anything.
 
 As it is training, StyleGAN will save pkl files periodically, under where it says "# Save snapshots".
+
+I'm currently having trouble running it on Windows. It may be helpful to run the StyleGAN2 Docker image instead.
