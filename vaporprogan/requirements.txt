@@ -4,3 +4,4 @@ keras==2.2.5
 scikit-image
 matplotlib
 opencv-python
+Pillow

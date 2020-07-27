@@ -28,6 +28,11 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+vaporprogan/vaporwave.npy
+metrics-master/
+Frechet-Inception-Distance/
+pytorch-fid-master/
+vaporprogan/TTUR-master
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
